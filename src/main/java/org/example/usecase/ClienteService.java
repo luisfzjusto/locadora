@@ -6,7 +6,10 @@ import org.example.dto.ClienteDTO;
 import org.example.dto.EnderecoDTO;
 import org.example.model.Cliente;
 import org.example.model.Endereco;
-import org.example.utils.CPFValidator;
+import org.example.validator.CPFValidator;
+import org.example.validator.DataNascimentoValidator;
+import org.example.validator.NomeValidator;
+import org.example.validator.TelefoneValidator;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,22 +36,6 @@ public class ClienteService {
     // Valida (após implementada todas a validações necessárias) os dados do cliente,
     // formata a data de nascimento e insere o cliente e seu endereço no banco de dados.
     public void cadastrarCliente(ClienteDTO clienteDTO){
-        if(!CPFValidator.validarCPF(clienteDTO.getCpf())){ // valida o CPF utilizando o CPFValidator. Caso inválido, lança a exceção
-            throw new IllegalArgumentException("CPF inválido.");
-        }
-
-        if(clienteDTO.getEnderecoDTO() == null){ // verifica se o endereço foi fornecido. Caso contrário, lança exceção
-            throw new IllegalArgumentException("Informar o endereço completo.");
-        }
-
-        try{
-            // tenta converter a data de nascimento do clienteDTO para um objeto do tipo LocalDate, usando o formato definido (formatter)
-            LocalDate dataNascimento = LocalDate.parse(clienteDTO.getDataNascimento().format(formatter), formatter);
-            clienteDTO.setDataNascimento(dataNascimento); // atualiza clienteDTO com a data formatada
-        } catch(DateTimeParseException e){
-            // caso o formato da data seja inválido, lança exceção com respectiva mensagem de erro
-            throw new IllegalArgumentException("Formato de data válido: dd/mm/aaaa");
-        }
 
         // Cria um novo objeto do tipo Cliente e MAPEIA os dados do clienteDTO para o objeto criado
         // (ex: cliente.setNome(clienteDTO.getNome());

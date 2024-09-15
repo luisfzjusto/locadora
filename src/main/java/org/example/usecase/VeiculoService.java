@@ -20,6 +20,7 @@ public class VeiculoService {
     // Método para cadastrar um veículo no BD
     // Converte um VeiculoDTO em um objeto Veiculo, define seus atributos e insere o veículo no banco de dados
     public void cadastrarVeiculo(VeiculoDTO veiculoDTO) {
+
         Veiculo veiculo = new Veiculo(); // Cria um objeto do tipo Veiculo e mapeia os dados via clienteDTO
         veiculo.setMarca(veiculoDTO.getMarca()); // define marca
         veiculo.setModelo(veiculoDTO.getModelo()); // define modelo

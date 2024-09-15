@@ -7,10 +7,12 @@ import org.example.model.Reserva;
 import org.example.usecase.ClienteService;
 import org.example.usecase.ReservaService;
 import org.example.usecase.VeiculoService;
+import org.example.validator.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -53,43 +55,124 @@ public class Main {
 
                     System.out.println("CADASTRO DE CLIENTES");
 
-                    System.out.println("Nome:");
-                    clienteDTO.setNome(scanner.nextLine()); // Lê o nome do cliente e o armazena no DTO
-
-                    System.out.println("CPF:");
-                    clienteDTO.setCpf(scanner.nextLine()); // Lê o cpf do cliente e o armazena no DTO
-
-                    System.out.println("Data de Nascimento (dd/mm/aaaa):");
-                    try { // Lê e formata a data de nascimento, armazenando-a no DTO
-                        String dataNascimento = scanner.nextLine();
-                        clienteDTO.setDataNascimento(LocalDate.parse(dataNascimento, formatter));
-                    } catch (DateTimeParseException e) { // Caso a data seja inválida, exibe uma mensagem de erro e sai deste case
-                        System.out.println("Data de nascimento inválida! Use o formato DD/MM/AAAA.");
-                        break;
+                    while(true) {
+                        System.out.println("Nome:");
+                        clienteDTO.setNome(scanner.nextLine());// Lê o nome do cliente e o armazena no DTO
+                        if(NomeValidator.validarNome(clienteDTO.getNome())){
+                            break; // nome é válido, portanto sai do loop
+                        } else{
+                            System.out.println("Nome inválido. Deve conter, no mínimo, 10 caracteres (apenas letras)");
+                        }
                     }
 
-                    System.out.println("Telefone:");
-                    clienteDTO.setTelefone(scanner.nextLine()); // Lê o telefone do cliente e o armazena no DTO
+                    while (true) {
+                        System.out.println("CPF:");
+                        String cpf = scanner.nextLine();
+
+                        // Validação de formato de CPF
+                        if (CPFValidator.validarCPF(cpf)) {
+                            // Verifica se o CPF já está cadastrado
+                            if (clienteService.buscarClientePorCPF(cpf) == null) {
+                                clienteDTO.setCpf(cpf);
+                                break;
+                            } else {
+                                System.out.println("CPF já cadastrado!");
+                            }
+                        } else {
+                            System.out.println("CPF inválido! Por favor, tente novamente.");
+                        }
+                    }
+
+                    while(true) {
+                        System.out.println("Data de Nascimento (dd/mm/aaaa):");
+                        String dataNascimentoString = scanner.nextLine();
+
+                        if(DataNascimentoValidator.validarFormatoData(dataNascimentoString)){
+                            LocalDate dataNascimento = LocalDate.parse(dataNascimentoString, formatter);
+
+                            if(DataNascimentoValidator.validarMaioridade(dataNascimento)){
+                                clienteDTO.setDataNascimento(dataNascimento);
+                                break;
+                            } else {
+                                System.out.println("Cliente deve ser maior de idade");
+                            }
+                        } else {
+                            System.out.println("Formato de data inválido (DD/MM/AAAA)");
+                        }
+                    }
+
+                    while(true){
+                        System.out.println("Telefone:");
+                        clienteDTO.setTelefone(scanner.nextLine()); // Lê o telefone do cliente e o armazena no DTO
+                        if(TelefoneValidator.validarTelefone(clienteDTO.getTelefone())){
+                            break;
+                        } else {
+                            System.out.println("Formato de telefone inválido ((00) 00000-0000)");
+                        }
+                    }
 
                     EnderecoDTO enderecoDTO = new EnderecoDTO(); // Cria um novo objeto EnderecoDTO para armazenar os dados do endereço
 
-                    System.out.println("Logradouro:");
-                    enderecoDTO.setLogradouro(scanner.nextLine()); // Lê o logradouro do endereço e armazena no DTO
+                    while(true) {
+                        System.out.println("Logradouro:");
+                        enderecoDTO.setLogradouro(scanner.nextLine()); // Lê o logradouro do endereço e armazena no DTO
+                        if(LogradouroValidator.validarLogradouro(enderecoDTO.getLogradouro())){
+                            break;
+                        } else {
+                            System.out.println("Logradouro inválido. Deve possuir, no mínimo, 4 caracteres");
+                        }
+                    }
 
-                    System.out.println("Número:");
-                    enderecoDTO.setNumero(scanner.nextLine()); // Lê o número do endereço e armazena no DTO
+                    while(true) {
+                        System.out.println("Número:");
+                        enderecoDTO.setNumero(scanner.nextLine()); // Lê o número do endereço e armazena no DTO
+                        if(NumeroValidator.validarNumero(enderecoDTO.getNumero())){
+                            break;
+                        } else {
+                            System.out.println("Número inválido. Não aceita letras e caracteres especiais");
+                        }
+                    }
 
-                    System.out.println("Bairro:");
-                    enderecoDTO.setBairro(scanner.nextLine()); // Lê o bairro do endereço e armazena no DTO
+                    while(true) {
+                        System.out.println("Bairro:");
+                        enderecoDTO.setBairro(scanner.nextLine()); // Lê o bairro do endereço e armazena no DTO
+                        if(BairroValidator.validarBairro(enderecoDTO.getBairro())){
+                            break;
+                        } else {
+                            System.out.println("Bairro inválido. Deve possuir, no mínimo, 5 caracteres");
+                        }
+                    }
 
-                    System.out.println("Cidade:");
-                    enderecoDTO.setCidade(scanner.nextLine()); // Lê a cidade do endereço e armazena no DTO
+                    while(true) {
+                        System.out.println("Cidade:");
+                        enderecoDTO.setCidade(scanner.nextLine()); // Lê a cidade do endereço e armazena no DTO
+                        if(CidadeValidator.validarCidade(enderecoDTO.getCidade())){
+                            break;
+                        } else {
+                            System.out.println("Cidade inválida. Deve possuir, no mínimo, 3 caracteres (letras)");
+                        }
+                    }
 
-                    System.out.println("UF:");
-                    enderecoDTO.setUf(scanner.nextLine()); // Lê a UF do endereço e armazena no DTO
+                    while(true) {
+                        System.out.println("UF:");
+                        String uf = scanner.nextLine();
+                        if(UFValidator.validarUF(uf)) {
+                            enderecoDTO.setUf(UFValidator.formatarUF(uf)); // Lê a UF do endereço e armazena no DTO
+                            break;
+                        } else {
+                            System.out.println("UF inválida. Deve conter apenas 2 letras");
+                        }
+                    }
 
-                    System.out.println("CEP:");
-                    enderecoDTO.setCep(scanner.nextLine()); // Lê o CEP do endereço e armazena no DTO
+                    while(true) {
+                        System.out.println("CEP:");
+                        enderecoDTO.setCep(scanner.nextLine()); // Lê o CEP do endereço e armazena no DTO
+                        if(CEPValidator.validarCEP(enderecoDTO.getCep())){
+                            break;
+                        } else {
+                            System.out.println("Formato de CEP inválido (00000-000)");
+                        }
+                    }
 
                     clienteDTO.setEnderecoDTO(enderecoDTO); // Associa o EnderecoDTO ao ClienteDTO
 
@@ -119,25 +202,83 @@ public class Main {
                     System.out.println("CADASTRO DE VEÍCULOS");
                     VeiculoDTO veiculoDTO = new VeiculoDTO(); // Cria um novo objeto VeiculoDTO para armazenar os dados do veículo
 
-                    System.out.println("Marca:");
-                    veiculoDTO.setMarca(scanner.nextLine()); // Lê a marca do veículo e a armazena no DTO
+                    while(true) {
+                        System.out.println("Marca:");
+                        veiculoDTO.setMarca(scanner.nextLine()); // Lê a marca do veículo e a armazena no DTO
+                        if(MarcaValidator.validarMarca(veiculoDTO.getMarca())){
+                            break;
+                        } else {
+                            System.out.println("Marca inválida. Deve conter, no mínimo, 3 letras");
+                        }
+                    }
 
-                    System.out.println("Modelo:");
-                    veiculoDTO.setModelo(scanner.nextLine()); // Lê o modelo do veículo e a armazena no DTO
+                    while(true) {
+                        System.out.println("Modelo:");
+                        veiculoDTO.setModelo(scanner.nextLine()); // Lê o modelo do veículo e a armazena no DTO
+                        if(ModeloValidator.validarModelo(veiculoDTO.getModelo())){
+                            break;
+                        } else {
+                            System.out.println("Modelo inválido. Deve conter, no mínimo, 3 caracteres");
+                        }
+                    }
 
-                    System.out.println("Ano:");
-                    veiculoDTO.setAno(scanner.nextInt()); // Lê o ano de fabricação do veículo e a armazena no DTO
+                    while(true) {
+                        try {
+                            System.out.println("Ano:");
+                            veiculoDTO.setAno(scanner.nextInt()); // Lê o ano de fabricação do veículo e a armazena no DTO
+                            if (AnoValidator.validarAno(String.valueOf(veiculoDTO.getAno()))) {
+                                break;
+                            } else {
+                                System.out.println("Ano inválido. Deve conter 4 dígitos numéricos");
+                            }
+                        } catch (InputMismatchException e){
+                            System.out.println("Ano inválido. Deve conter 4 dígitos numéricos");
+                        }
+                    }
+
                     scanner.nextLine(); // consome uma linha
 
-                    System.out.println("Placa:");
-                    veiculoDTO.setPlaca(scanner.nextLine()); // Lê a placa do veículo e a armazena no DTO
+                    while (true) {
+                        System.out.println("Placa:");
+                        String placa = scanner.nextLine();
+                        if (PlacaValidator.validarPlaca(placa)) {
+                            // Verifica se a placa já está cadastrada
+                            if (veiculoService.buscarVeiculoPorPlaca(placa) == null) {
+                                veiculoDTO.setPlaca(placa);
+                                break;
+                            } else {
+                                System.out.println("Placa já cadastrada! Informe uma placa diferente.");
+                            }
+                        } else {
+                            System.out.println("Placa inválida. Formato: AAA-0000 ou AAA-0A00.");
+                        }
+                    }
 
-                    System.out.println("Preço diário:");
-                    veiculoDTO.setDiaria(scanner.nextDouble()); // // Lê o valor da diária do veículo e a armazena no DTO
+                    while(true) {
+                        try{
+                            System.out.println("Preço diário:");
+                            veiculoDTO.setDiaria(scanner.nextDouble()); // // Lê o valor da diária do veículo e a armazena no DTO
+                            if(DiariaValidator.validarDiaria(veiculoDTO.getDiaria())){
+                                break;
+                            } else {
+                                System.out.println("Diária inválida. Deve ser numérico e positivo");
+                            }
+                        } catch (InputMismatchException e){
+                            System.out.println("Diária inválida. Deve ser numérico e positivo");
+                            scanner.nextLine(); // consome uma linha
+                        }
+                    }
                     scanner.nextLine(); // consome uma linha
 
-                    System.out.println("Categoria:"); // Lê a categoria do veículo e a armazena no DTO
-                    veiculoDTO.setCategoria(scanner.nextLine());
+                    while(true) {
+                        System.out.println("Categoria:");
+                        veiculoDTO.setCategoria(scanner.nextLine()); // Lê a categoria do veículo e a armazena no DTO
+                        if(CategoriaValidator.validarCategoria(veiculoDTO.getCategoria())){
+                            break;
+                        } else {
+                            System.out.println("Categoria inválida. Opções: POPULAR, SUPERIOR, UTILITARIO, PREMIUM ");
+                        }
+                    }
 
                     veiculoService.cadastrarVeiculo(veiculoDTO); // Chama o serviço de veículo para cadastrar o veículo no sistema
                     System.out.println("VEÍCULO CADASTRADO COM SUCESSO!");
