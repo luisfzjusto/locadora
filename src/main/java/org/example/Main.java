@@ -186,15 +186,18 @@ public class Main {
 
                 case 2:
                     System.out.println("CONSULTA DE CLIENTES");
-                    System.out.println("Informe o CPF:");
-                    String cpf = scanner.nextLine(); // Lê o CPF do cliente a ser consultado
+                    while(true) {
+                        System.out.println("Informe o CPF:");
+                        String cpf = scanner.nextLine(); // Lê o CPF do cliente a ser consultado
 
-                    ClienteDTO clienteLocalizado = clienteService.buscarClientePorCPF(cpf); // Busca o cliente no sistema pelo CPF
+                        ClienteDTO clienteLocalizado = clienteService.buscarClientePorCPF(cpf); // Busca o cliente no sistema pelo CPF
 
-                    if(clienteLocalizado != null){ // Se o cliente for encontrado, exibe seus dados
-                        System.out.println("Nome: " + clienteLocalizado.getNome() + "\n" + "CPF: " + clienteLocalizado.getCpf() + "\n" + "Telefone: " + clienteLocalizado.getTelefone());
-                    } else{ // Caso contrário, exibe uma mensagem informando que o cliente não foi localizado
-                        System.out.println("CLIENTE NÃO LOCALIZADO!");
+                        if (clienteLocalizado != null) { // Se o cliente for encontrado, exibe seus dados
+                            System.out.println("Nome: " + clienteLocalizado.getNome() + "\n" + "CPF: " + clienteLocalizado.getCpf() + "\n" + "Telefone: " + clienteLocalizado.getTelefone());
+                            break;
+                        } else { // Caso contrário, exibe uma mensagem informando que o cliente não foi localizado
+                            System.out.println("CLIENTE NÃO LOCALIZADO!");
+                        }
                     }
                     break;
 
@@ -286,71 +289,147 @@ public class Main {
 
                 case 4:
                     System.out.println("RELAÇÃO DE VEÍCULOS DA LOJA");
-                    System.out.println("Escolha a opção desejada:");
-                    System.out.println("1 - Veículos disponíveis");
-                    System.out.println("2 - Veículos alugados");
+                    while (true) {
+                        System.out.println("Escolha a opção desejada:");
+                        System.out.println("1 - Veículos disponíveis");
+                        System.out.println("2 - Veículos alugados");
 
-                    int opcaoEstoque = scanner.nextInt(); // Lê a opção de listagem de veículos (disponíveis ou alugados)
-                    scanner.nextLine();
+                        // Tenta capturar a entrada do usuário
+                        try {
+                            String input = scanner.nextLine().trim(); // Lê a entrada e remove espaços em branco
+                            if (input.isEmpty()) { // Verifica se o usuário não forneceu entrada
+                                System.out.println("Opção inválida!");
+                                continue; // Volta ao início do loop
+                            }
 
-                    if(opcaoEstoque == 1){ // lista os veículos disponíveis
-                        System.out.println("RELAÇÃO DE VEÍCULOS DISPONÍVEIS PARA LOCAÇÃO:");
-                        // Cria uma lista para armazenar e chama o serviço de veículo para listar os veículos disponíveis
-                        List<VeiculoDTO> veiculosDisponiveis = veiculoService.listarVeiculosDisponiveis();
-                        for (VeiculoDTO veiculo : veiculosDisponiveis){ // Itera pela lista de veículos disponíveis e exibe suas informações
-                            System.out.println("Marca: " + veiculo.getMarca() + "\n" + "Modelo: " + veiculo.getModelo() + "\n" + "Ano: " + veiculo.getAno() + "\n" + "Placa: " + veiculo.getPlaca() + "\n" + "Categoria: " + veiculo.getCategoria());
+                            int opcaoEstoque = Integer.parseInt(input); // Converte a entrada para int
+
+                            if (opcaoEstoque == 1) { // lista os veículos disponíveis
+                                System.out.println("RELAÇÃO DE VEÍCULOS DISPONÍVEIS PARA LOCAÇÃO:");
+                                // Cria uma lista para armazenar e chama o serviço de veículo para listar os veículos disponíveis
+                                List<VeiculoDTO> veiculosDisponiveis = veiculoService.listarVeiculosDisponiveis();
+                                if (veiculosDisponiveis.isEmpty()) {
+                                    System.out.println("Não há veículos disponíveis para locação");
+                                } else {
+                                    for (VeiculoDTO veiculo : veiculosDisponiveis) { // Itera pela lista de veículos disponíveis e exibe suas informações
+                                        System.out.println("Marca: " + veiculo.getMarca() + "\n"
+                                                + "Modelo: " + veiculo.getModelo() + "\n"
+                                                + "Ano: " + veiculo.getAno() + "\n"
+                                                + "Placa: " + veiculo.getPlaca() + "\n"
+                                                + "Categoria: " + veiculo.getCategoria());
+                                    }
+                                }
+                                break; // volta ao menu principal
+                            } else if (opcaoEstoque == 2) { // lista os veículos alugados
+                                System.out.println("RELAÇÃO DE VEÍCULOS LOCADOS:");
+                                // Cria uma lista para armazenar e chama o serviço de veículo para listar os veículos alugados
+                                List<VeiculoDTO> veiculosAlugados = veiculoService.listarVeiculosAlugados();
+                                if (veiculosAlugados.isEmpty()) {
+                                    System.out.println("Não há veículos alugados no momento.");
+                                } else {
+                                    for (VeiculoDTO veiculo : veiculosAlugados) { // Itera pela lista de veículos alugados e exibe suas informações
+                                        System.out.println("Marca: " + veiculo.getMarca() + "\n"
+                                                + "Modelo: " + veiculo.getModelo() + "\n"
+                                                + "Ano: " + veiculo.getAno() + "\n"
+                                                + "Placa: " + veiculo.getPlaca() + "\n"
+                                                + "Categoria: " + veiculo.getCategoria());
+                                    }
+                                }
+                                break; // Após exibir os veículos, volta ao menu principal
+                            } else { // Se for selecionada uma opção inválida
+                                System.out.println("Opção inválida!");
+                            }
+                        } catch (NumberFormatException e) { // Captura erro se a entrada não for um número
+                            System.out.println("Opção inválida!");
                         }
-                    } else if (opcaoEstoque == 2){ // lista os veículos alugados
-                        System.out.println("RELAÇÃO DE VEÍCULOS LOCADOS:");
-                        // Cria uma lista para armazenar e chama o serviço de veículo para listar os veículos alugados
-                        List<VeiculoDTO> veiculosAlugados = veiculoService.listarVeiculosAlugados();
-                        for (VeiculoDTO veiculo : veiculosAlugados){ // Itera pela lista de veículos alugados e exibe suas informações
-                            System.out.println("Marca: " + veiculo.getMarca() + "\n" + "Modelo: " + veiculo.getModelo() + "\n" + "Ano: " + veiculo.getAno() + "\n" + "Placa: " + veiculo.getPlaca() + "\n" + "Categoria: " + veiculo.getCategoria());
-                        }
-                    } else { // Se for selecionada uma opção inválida, exibe uma mensagem de erro
-                        System.out.println("Opção inválida!");
                     }
-                    break;
+                    break; // volta ao menu principal
+
+
 
                 case 5:
                     System.out.println("CONSULTA DE VEÍCULOS");
-                    System.out.println("Informe a placa:");
-                    String placa = scanner.nextLine(); // Lê a placa do veículo a ser consultado
-                    VeiculoDTO veiculoLocalizado = veiculoService.buscarVeiculoPorPlaca(placa); // Chama o serviço de veículo para buscar o veículo pela placa.
-                    if(veiculoLocalizado != null){ // Se o veículo for encontrado, exibe suas informações
-                        System.out.println("Marca: " + veiculoLocalizado.getMarca() + "\n" + "Modelo: " + veiculoLocalizado.getModelo() + "\n" + "Ano: " + veiculoLocalizado.getAno() + "\n" + "Placa: " + veiculoLocalizado.getPlaca() + "\n" + "Categoria: " + veiculoLocalizado.getCategoria() + "\n" + "Status: " + veiculoLocalizado.getStatus());
-                    } else { // Caso contrário, exibe uma mensagem informando que o veículo não foi localizado
-                        System.out.println("VEÍCULO NÃO ENCONTRADO!");
+                    while(true) {
+                        System.out.println("Informe a placa:");
+                        String placa = scanner.nextLine(); // Lê a placa do veículo a ser consultado
+                        VeiculoDTO veiculoLocalizado = veiculoService.buscarVeiculoPorPlaca(placa); // Chama o serviço de veículo para buscar o veículo pela placa.
+                        if (veiculoLocalizado != null) { // Se o veículo for encontrado, exibe suas informações
+                            System.out.println("Marca: " + veiculoLocalizado.getMarca() + "\n" + "Modelo: " + veiculoLocalizado.getModelo() + "\n" + "Ano: " + veiculoLocalizado.getAno() + "\n" + "Placa: " + veiculoLocalizado.getPlaca() + "\n" + "Categoria: " + veiculoLocalizado.getCategoria() + "\n" + "Status: " + veiculoLocalizado.getStatus());
+                            break;
+                        } else { // Caso contrário, exibe uma mensagem informando que o veículo não foi localizado
+                            System.out.println("VEÍCULO NÃO ENCONTRADO!");
+                        }
                     }
                     break;
 
                 case 6:
                     System.out.println("RESERVA DE VEÍCULOS");
-                    System.out.println("Informe o cpf do cliente:");
-                    String cpfCliente = scanner.nextLine(); // Lê o CPF do cliente que deseja fazer a reserva
-                    ClienteDTO cliente = clienteService.buscarClientePorCPF(cpfCliente); // Chama o serviço que busca o cliente no sistema pelo CPF
-                    if(cliente == null){ // Se o cliente não for localizado, exibe uma mensagem de erro e sai deste case
-                        System.out.println("Cliente não localizado");
-                        break;
+
+                    // Loop para obter o CPF do cliente
+                    ClienteDTO cliente = null;
+                    while (true) {
+                        System.out.println("Informe o CPF do cliente:");
+                        String cpfCliente = scanner.nextLine(); // Lê o CPF do cliente que deseja fazer a reserva
+                        cliente = clienteService.buscarClientePorCPF(cpfCliente); // Chama o serviço que busca o cliente no sistema pelo CPF
+                        if (cliente != null) { // Se o cliente for localizado
+                            break; // Sai do loop
+                        } else {
+                            System.out.println("Cliente não localizado!");
+                        }
                     }
 
-                    System.out.println("Informe a placa do veículo:");
-                    String placaVeiculo = scanner.nextLine(); // Lê a placa do veículo que o cliente deseja reservar
-                    VeiculoDTO veiculo = veiculoService.buscarVeiculoPorPlaca(placaVeiculo); // Chama o serviço que busca o veículo no sistema pela placa
-                    if(veiculo == null){ // Se o veículo não for localizado, exibe uma mensagem de erro e sai deste case
-                        System.out.println("Veículo não localizado");
-                        break;
+                    // Loop para obter a placa do veículo
+                    VeiculoDTO veiculo = null;
+                    while (true) {
+                        System.out.println("Informe a placa do veículo:");
+                        String placaVeiculo = scanner.nextLine(); // Lê a placa do veículo
+                        veiculo = veiculoService.buscarVeiculoPorPlaca(placaVeiculo); // Busca o veículo no sistema pelo serviço
+                        if (veiculo != null) { // Se o veículo for localizado
+                            break; // Sai do loop
+                        } else {
+                            System.out.println("Veículo não localizado!");
+                        }
                     }
 
-                    System.out.println("Informe o tipo de reserva (diaria || mensal || anual):");
-                    String tipoReserva = scanner.nextLine(); // Lê o tipo de reserva (diária, mensal ou anual)
-                    System.out.println("Informe a quantidade (dias || meses || anos):");
-                    int quantidade = scanner.nextInt(); // Lê a quantidade de dias, meses ou anos para a reserva
-                    scanner. nextLine(); // Consome a linha
+                    // Loop para obter o tipo de reserva
+                    String tipoReserva = "";
+                    while (true) {
+                        System.out.println("Informe o tipo de reserva (diaria || mensal || anual):");
+                        tipoReserva = scanner.nextLine().trim().toLowerCase(); // Lê o tipo de reserva
 
-                    reservaService.realizarReserva(cliente, veiculo, tipoReserva, quantidade); // Chama o serviço de reserva para realizar a reserva
+                        if (tipoReserva.equals("diaria") || tipoReserva.equals("mensal") || tipoReserva.equals("anual")) {
+                            // Entrada válida, continua para a quantidade
+                            break;
+                        } else {
+                            System.out.println("Tipo de reserva inválido! Opções: diaria, mensal ou anual.");
+                        }
+                    }
+
+                    // Loop para obter a quantidade com tratamento de exceção
+                    int quantidade = 0;
+                    while (true) {
+                        try {
+                            System.out.println("Informe a quantidade (dias || meses || anos):");
+                            String entradaQuantidade = scanner.nextLine(); // Lê a entrada como String
+                            if (entradaQuantidade.isEmpty()) {
+                                throw new InputMismatchException(); // Força a exceção se a entrada for vazia
+                            }
+                            quantidade = Integer.parseInt(entradaQuantidade); // Converte a entrada para int
+                            if (quantidade > 0) {
+                                break; // Sai do loop se a entrada for válida
+                            } else {
+                                System.out.println("Diária deve ser um valor numérico positivo!");
+                            }
+                        } catch (NumberFormatException | InputMismatchException e) {
+                            System.out.println("Diária deve ser um valor numérico positivo!");
+                        }
+                    }
+
+                    // Chama o serviço de reserva para realizar a reserva
+                    reservaService.realizarReserva(cliente, veiculo, tipoReserva, quantidade);
                     System.out.println("RESERVA REALIZADA COM SUCESSO!");
                     break;
+
 
                 case 7:
                     System.out.println("DEVOLUÇÃO DE VEÍCULOS");

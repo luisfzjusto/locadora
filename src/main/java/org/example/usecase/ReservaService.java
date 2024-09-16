@@ -37,7 +37,7 @@ public class ReservaService {
     // a seleção de uma estratégia de precificação e o cálculo do valor total da reserva
     public void realizarReserva(ClienteDTO clienteDTO, VeiculoDTO veiculoDTO, String tipoReserva, int quantidade) {
 
-        Cliente cliente = buscarClientePorCpf(clienteDTO.getCpf()); // busca o cliente no BD a partir do CPF
+        Cliente cliente = clienteDAO.buscarClientePorCPF(clienteDTO.getCpf()); // busca o cliente no BD a partir do CPF
 
         if(cliente == null){ // se o cliente não for encontrado, exibe uma mensagem e retorna
             System.out.println("Cliente não encontrado!");
