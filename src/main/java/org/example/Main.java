@@ -176,12 +176,8 @@ public class Main {
 
                     clienteDTO.setEnderecoDTO(enderecoDTO); // Associa o EnderecoDTO ao ClienteDTO
 
-                    try { // Chama o serviço de cliente para cadastrar o cliente no sistema
-                        clienteService.cadastrarCliente(clienteDTO);
-                        System.out.println("CLIENTE CADASTRADO COM SUCESSO!");
-                    } catch (IllegalArgumentException e) { // Caso ocorra algum erro no cadastro, exibe a mensagem de erro
-                        System.out.println(e.getMessage());
-                    }
+                    clienteService.cadastrarCliente(clienteDTO);
+                    System.out.println("CLIENTE CADASTRADO COM SUCESSO!");
                     break;
 
                 case 2:
