@@ -2,7 +2,10 @@ package org.example.validator;
 
 public class BairroValidator {
     public static boolean validarBairro(String bairro){
-        // verifica se logradouro não contém caracteres especiais e possui, no mínimo, 5 caracteres
-        return bairro != null && bairro.trim().length() >= 5 && bairro.matches("[A-Za-zÀ-ÖØ-öø-ÿ\\d\\s]+");
+        // Verifica se bairro não contém caracteres especiais, tem pelo menos 5 caracteres e não apenas números
+        return bairro != null
+                && bairro.trim().length() >= 5
+                && bairro.matches("[A-Za-zÀ-ÖØ-öø-ÿ\\d\\s]+") // Permite letras, dígitos e espaços
+                && bairro.matches(".*[A-Za-zÀ-ÖØ-öø-ÿ]+.*"); // Garante que tenha ao menos uma letra
     }
 }

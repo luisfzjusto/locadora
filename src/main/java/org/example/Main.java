@@ -107,7 +107,7 @@ public class Main {
                         if(TelefoneValidator.validarTelefone(clienteDTO.getTelefone())){
                             break;
                         } else {
-                            System.out.println("Formato de telefone inválido ((00) 00000-0000)");
+                            System.out.println("Formato de telefone inválido ((00) 00000-0000 || (00) 0000-0000)");
                         }
                     }
 
@@ -129,7 +129,7 @@ public class Main {
                         if(NumeroValidator.validarNumero(enderecoDTO.getNumero())){
                             break;
                         } else {
-                            System.out.println("Número inválido. Não aceita letras e caracteres especiais");
+                            System.out.println("Número inválido. (Máximo de 6 caracteres numéricos)");
                         }
                     }
 
@@ -139,7 +139,7 @@ public class Main {
                         if(BairroValidator.validarBairro(enderecoDTO.getBairro())){
                             break;
                         } else {
-                            System.out.println("Bairro inválido. Deve possuir, no mínimo, 5 caracteres");
+                            System.out.println("Bairro inválido. Deve possuir, no mínimo, 5 caracteres alfanuméricos");
                         }
                     }
 
@@ -221,21 +221,24 @@ public class Main {
                         }
                     }
 
-                    while(true) {
+                    while (true) {
+                        System.out.println("Ano:");
+                        String entradaAno = scanner.nextLine(); // Lê a entrada como string
+                        if (entradaAno.isEmpty()) {
+                            System.out.println("Ano inválido. Deve conter 4 dígitos numéricos.");
+                            continue; // Volta ao início do loop
+                        }
                         try {
-                            System.out.println("Ano:");
-                            veiculoDTO.setAno(scanner.nextInt()); // Lê o ano de fabricação do veículo e a armazena no DTO
+                            veiculoDTO.setAno(Integer.parseInt(entradaAno)); // Converte a entrada para int
                             if (AnoValidator.validarAno(String.valueOf(veiculoDTO.getAno()))) {
                                 break;
                             } else {
-                                System.out.println("Ano inválido. Deve conter 4 dígitos numéricos");
+                                System.out.println("Ano inválido. Deve conter 4 dígitos numéricos.");
                             }
-                        } catch (InputMismatchException e){
-                            System.out.println("Ano inválido. Deve conter 4 dígitos numéricos");
+                        } catch (NumberFormatException e) {
+                            System.out.println("Ano inválido. Deve conter 4 dígitos numéricos.");
                         }
                     }
-
-                    scanner.nextLine(); // consome uma linha
 
                     while (true) {
                         System.out.println("Placa:");
@@ -253,21 +256,24 @@ public class Main {
                         }
                     }
 
-                    while(true) {
-                        try{
-                            System.out.println("Preço diário:");
-                            veiculoDTO.setDiaria(scanner.nextDouble()); // // Lê o valor da diária do veículo e a armazena no DTO
-                            if(DiariaValidator.validarDiaria(veiculoDTO.getDiaria())){
+                    while (true) {
+                        System.out.println("Preço diário:");
+                        String entradaDiaria = scanner.nextLine(); // Lê a entrada como string
+                        if (entradaDiaria.isEmpty()) {
+                            System.out.println("Diária inválida. Deve ser numérico e positivo.");
+                            continue; // Volta ao início do loop
+                        }
+                        try {
+                            veiculoDTO.setDiaria(Double.parseDouble(entradaDiaria)); // Converte a entrada para double
+                            if (DiariaValidator.validarDiaria(veiculoDTO.getDiaria())) {
                                 break;
                             } else {
-                                System.out.println("Diária inválida. Deve ser numérico e positivo");
+                                System.out.println("Diária inválida. Deve ser numérico e positivo.");
                             }
-                        } catch (InputMismatchException e){
-                            System.out.println("Diária inválida. Deve ser numérico e positivo");
-                            scanner.nextLine(); // consome uma linha
+                        } catch (NumberFormatException e) {
+                            System.out.println("Diária inválida. Deve ser numérico e positivo.");
                         }
                     }
-                    scanner.nextLine(); // consome uma linha
 
                     while(true) {
                         System.out.println("Categoria:");
