@@ -39,14 +39,14 @@ public class ReservaService {
 
         Cliente cliente = clienteDAO.buscarClientePorCPF(clienteDTO.getCpf()); // busca o cliente no BD a partir do CPF
 
-        if(cliente == null){ // se o cliente não for encontrado, exibe uma mensagem e retorna
+        if (cliente == null) { // se o cliente não for encontrado, exibe uma mensagem e retorna
             System.out.println("Cliente não encontrado!");
             return;
         }
 
         Veiculo veiculo = veiculoDAO.buscarVeiculoPorPlaca(veiculoDTO.getPlaca()); // busca o veiculo no BD a partir da placa
 
-        if(veiculo == null){ // se a o veiculo não for encontrado, exibe uma mensagem e retorna
+        if (veiculo == null) { // se a o veiculo não for encontrado, exibe uma mensagem e retorna
             System.out.println("Veículo não encontrado!");
             return;
         }
@@ -82,19 +82,28 @@ public class ReservaService {
         System.out.println("Valor total da reserva: " + valorTotal);
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Deseja confirmar a reserva? (s/n)"); // Solicita ao usuario a confirmação da reserva
-        String confirmacao = scanner.nextLine();
+        String confirmacao = "";
 
-        if("s".equalsIgnoreCase(confirmacao)){ // se o usuário confirmar a reserva
-            contaLocadora.adicionarSaldo(valorTotal); // adiciona o valor da reserva ao saldo de contaLocadora
-            System.out.println("Pagamento realizado com sucesso!");
+        while (true) {
+            System.out.println("Deseja confirmar a reserva? (S/N)"); // Solicita ao usuario a confirmação da reserva
+            confirmacao = scanner.nextLine().trim().toUpperCase();
 
-            veiculo.setStatus("alugado"); // altera o status do veículo para alugado
-            veiculoDAO.atualizarVeiculo(veiculo); // atualiza o status no BD
+            if(confirmacao.equals("S")){ // se o usuário confirmar a reserva
+                contaLocadora.adicionarSaldo(valorTotal); // adiciona o valor da reserva ao saldo de contaLocadora
+                System.out.println("Pagamento realizado com sucesso!");
 
-            reservaDAO.reservar(reserva); // salva a reserva no BD
-        } else{ // caso o usuário não confirme a reserva, exibe mensagem no console
-            System.out.println("Reserva não realizada.");
+                veiculo.setStatus("alugado"); // altera o status do veículo para alugado
+                veiculoDAO.atualizarVeiculo(veiculo); // atualiza o status no BD
+
+                reservaDAO.reservar(reserva); // salva a reserva no BD
+                System.out.println("Reserva realizada com sucesso!");
+                break;
+            } else if(confirmacao.equals("N")){ // caso o usuário não confirme a reserva, exibe mensagem no console
+                System.out.println("Reserva não realizada.");
+                break;
+            } else {
+                System.out.println("Informe uma entrada válida (S/N)");
+            }
         }
     }
 

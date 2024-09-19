@@ -268,10 +268,10 @@ public class Main {
                             if (DiariaValidator.validarDiaria(veiculoDTO.getDiaria())) {
                                 break;
                             } else {
-                                System.out.println("Diária inválida. Deve ser numérico e positivo.");
+                                System.out.println("Diária inválida. Deve ser positivo e menor que 10.000,00");
                             }
                         } catch (NumberFormatException e) {
-                            System.out.println("Diária inválida. Deve ser numérico e positivo.");
+                            System.out.println("Diária inválida. Deve ser numérico");
                         }
                     }
 
@@ -429,7 +429,6 @@ public class Main {
 
                     // Chama o serviço de reserva para realizar a reserva
                     reservaService.realizarReserva(cliente, veiculo, tipoReserva, quantidade);
-                    System.out.println("RESERVA REALIZADA COM SUCESSO!");
                     break;
 
 
