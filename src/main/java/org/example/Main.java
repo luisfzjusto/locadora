@@ -393,43 +393,66 @@ public class Main {
                         }
                     }
 
-                    // Loop para obter o tipo de reserva
-                    String tipoReserva = "";
+                    // Loop principal para tipo de reserva e quantidade
                     while (true) {
-                        System.out.println("Informe o tipo de reserva (diaria || mensal || anual):");
-                        tipoReserva = scanner.nextLine().trim().toLowerCase(); // Lê o tipo de reserva
+                        String tipoReserva = "";
+                        // Loop para obter o tipo de reserva
+                        while (true) {
+                            System.out.println("Informe o tipo de reserva (DIARIA || MENSAL || ANUAL):");
+                            tipoReserva = scanner.nextLine().trim().toLowerCase(); // Lê o tipo de reserva
 
-                        if (tipoReserva.equals("diaria") || tipoReserva.equals("mensal") || tipoReserva.equals("anual")) {
-                            // Entrada válida, continua para a quantidade
-                            break;
-                        } else {
-                            System.out.println("Tipo de reserva inválido! Opções: diaria, mensal ou anual.");
-                        }
-                    }
-
-                    // Loop para obter a quantidade com tratamento de exceção
-                    int quantidade = 0;
-                    while (true) {
-                        try {
-                            System.out.println("Informe a quantidade (dias || meses || anos):");
-                            String entradaQuantidade = scanner.nextLine(); // Lê a entrada como String
-                            if (entradaQuantidade.isEmpty()) {
-                                throw new InputMismatchException(); // Força a exceção se a entrada for vazia
-                            }
-                            quantidade = Integer.parseInt(entradaQuantidade); // Converte a entrada para int
-                            if (quantidade > 0) {
-                                break; // Sai do loop se a entrada for válida
+                            if (tipoReserva.equals("diaria") || tipoReserva.equals("mensal") || tipoReserva.equals("anual")) {
+                                // Entrada válida, continua para a quantidade
+                                break;
                             } else {
-                                System.out.println("Diária deve ser um valor numérico positivo!");
+                                System.out.println("Tipo de reserva inválido! Opções: DIARIA, MENSAL ou ANUAL");
                             }
-                        } catch (NumberFormatException | InputMismatchException e) {
-                            System.out.println("Diária deve ser um valor numérico positivo!");
+                        }
+
+                        // Loop para obter a quantidade com limite de dias, meses ou anos
+                        int quantidade = 0;
+                        boolean quantidadeValida = false;
+                        while (!quantidadeValida) {
+                            try {
+                                System.out.println("Informe a quantidade (dias || meses || anos):");
+                                String entradaQuantidade = scanner.nextLine(); // Lê a entrada como String
+
+                                if (entradaQuantidade.isEmpty()) {
+                                    throw new InputMismatchException(); // Força a exceção se a entrada for vazia
+                                }
+
+                                quantidade = Integer.parseInt(entradaQuantidade); // Converte a entrada para int
+
+                                // Verifica os limites de acordo com o tipo de reserva
+                                if (tipoReserva.equals("diaria") && (quantidade < 1 || quantidade > 29)) {
+                                    System.out.println("Intervalo permitido para reservas diárias: de 1 a 29 dias");
+                                    System.out.println("Para um intervalo superior, informe a opção MENSAL");
+                                    break; // Sai do loop de quantidade e retorna para o tipo de reserva
+                                } else if (tipoReserva.equals("mensal") && (quantidade < 1 || quantidade > 11)) {
+                                    System.out.println("Intervalo permitido para reservas diárias: de 1 a 11 meses");
+                                    System.out.println("Para um intervalo superior, informe a opção ANUAL");
+                                    break; // Sai do loop de quantidade e retorna para o tipo de reserva
+                                } else if (tipoReserva.equals("anual") && (quantidade < 1 || quantidade > 3)) {
+                                    System.out.println("Período máximo de locação: 3 anos");
+                                    break; // Sai do loop de quantidade e retorna para o tipo de reserva
+                                } else {
+                                    // Se a quantidade for válida, continua
+                                    quantidadeValida = true;
+                                }
+                            } catch (NumberFormatException | InputMismatchException e) {
+                                System.out.println("A quantidade deve ser um número positivo.");
+                            }
+                        }
+
+                        // Se a quantidade for válida, sai do loop principal e realiza a reserva
+                        if (quantidadeValida) {
+                            // Chama o serviço de reserva para realizar a reserva
+                            reservaService.realizarReserva(cliente, veiculo, tipoReserva, quantidade);
+                            break;
                         }
                     }
-
-                    // Chama o serviço de reserva para realizar a reserva
-                    reservaService.realizarReserva(cliente, veiculo, tipoReserva, quantidade);
                     break;
+
 
 
                 case 7:
